@@ -6,7 +6,7 @@ This project is an attempt to adapt Deep Q-Learning, as described in [Playing At
 * TensorFlow 0.10
 
 ## TODOS:
-~~* Enumerate best states for 2D tictactoe using minimax
+* ~~Enumerate best states for 2D tictactoe using minimax~~
 
 * Implement q learning for 2D tictactoe
 

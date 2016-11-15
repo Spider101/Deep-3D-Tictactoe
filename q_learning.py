@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import timeit
 
-
 def empty_state():
 	'''establish the empty wherein each cell is filled by zero'''
 	return [ [0] * 3 ] * 3
@@ -18,21 +17,21 @@ def is_game_over(state):
 		state_trans = np.array(state).transpose() # transposed board state
 
 		#check for winner row-wise
-		if np.array(state[i]).sum() % 3:
-			return np.array(state[i]) / 3
+		if np.array(state[i]).sum() != 0 and np.array(state[i]).sum() % 3:
+			return np.array(state[i]).sum() / 3
 
 		#check for winner column-wise
-		elif state_trans[i].sum() % 3:
+		elif state_trans[i].sum() !=0 and state_trans[i].sum() % 3:
 			return state_trans.sum() / 3
 
 	#extract major diagonal from the state
 	major_diag = np.multiply(np.array(state), np.identity(len(state))) 
-	if major_diag.sum() % 3:
+	if major_diag.sum() != 0 and major_diag.sum() % 3:
 		return major_diag.sum() / 3
 	
 	#extract minor diagonal from the state
 	minor_diag = np.multiply(np.array(state), np.fliplr(major_diag))
-	if minor_diag.sum() % 3:
+	if minor_diag.sum() != 0 and minor_diag.sum() % 3:
 		return minor_diag.sum() / 3
 
 	return 0 #no clear winner
@@ -42,8 +41,8 @@ def get_state_key(state):
 	''' convert the state into a unique key by concatenating 
 	all the flattened values in the state'''
 
-	flat_state = [cell for row in state for cell in sublist]
-	return int("".join(map(str, flat_state)))
+	flat_state = [cell for row in state for cell in row]
+	return "".join(map(str, flat_state))
 
 def generate_state_value_table(state, turn, player):
 
@@ -65,19 +64,22 @@ class Agent(object):
 	
 	def __init__(self, player):
 		self.state_values = {}
-        self.symbol = player
-        self.is_learning = is_learning
-        self.behaviour_threshold = 0.1
-        self.learning_rate = 0.9
-        self.prev_state = None
-        self.prev_score = 0
+		self.symbol = player
+        #self.is_learning = is_learning
+		self.behaviour_threshold = 0.1
+		self.learning_rate = 0.9
+		self.prev_state = None
+		self.prev_score = 0
+		self.num_states = 0
 
-        print "\nInitializing state table for player ", self.player, ". Please wait ..."
-        state_timer = timeit.default_timer()
-        generate_state_value_table(empty_state(), 0, self)
-        print "Time taken to initialize state table: ", (timeit.default_timer() - start_time) 
+		print "\nInitializing state table for player ", self.symbol, ". Please wait ..."
+		start_time = timeit.default_timer()
+		generate_state_value_table(empty_state(), 0, self)
+		print "Time taken to initialize state table: ", (timeit.default_timer() - start_time) 
 
 	def add_state(self, state, value):
+		#print "\nAdded state ", self.num_states+1
+		#self.num_states += 1
 		self.state_values[get_state_key(state)] = value
 
 	def count_states(self):
@@ -113,4 +115,4 @@ class Agent(object):
 
 
 player1 = Agent(player=1)
-print "\nNumber of possible states: ", player.count_states()
+print "\nNumber of possible states: ", player1.count_states()

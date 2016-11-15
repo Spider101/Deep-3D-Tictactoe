@@ -83,7 +83,6 @@ def determine(tic):
 
     if(tic.isGameOver()):
         return tic
-    print("not over")
     # tic.display()
     states = []
     scores = []
@@ -94,15 +93,24 @@ def determine(tic):
         states.append(state[1])
         scores.append(score)
 
-        if score ==1:
-            return state[1]
+        # if score ==1:
+        #     return state[1]
 
 
+    maxScore = -1
+    maxScoreState = 0
     for score in enumerate(scores):
-        if score[1] ==0:
-            return states[score[0]]
 
-    return states[0]
+        if score[1] ==1:
+            return states[score[0]]
+        elif score[1] ==0:
+            maxScore = 0
+            maxScoreState = states[score[0]]
+
+    if maxScoreState==0:
+        return states[0]
+    return maxScoreState
+
 
 
 

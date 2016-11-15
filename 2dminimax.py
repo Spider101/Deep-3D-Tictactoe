@@ -68,6 +68,9 @@ class Tic(object):
             else :
                 return 0
 
+
+
+
     def isGameOver(self):
         for i in enumerate(self.positions):
             if i[1] ==None:
@@ -80,13 +83,14 @@ def determine(tic):
 
     if(tic.isGameOver()):
         return tic
-
+    print("not over")
     # tic.display()
     states = []
     scores = []
 
     for state in enumerate(tic.getNextPossibleStates()):
-        score = state[1].caclulateScore()
+        finalState = copy.deepcopy(determine(state[1]))
+        score = finalState.caclulateScore()
         states.append(state[1])
         scores.append(score)
 
@@ -106,7 +110,7 @@ def determine(tic):
 
 
 
-testBoard = [None,None,None,None,'o',None,None,None,None]
+testBoard = ["x",None,None,"o","o",None,None,None,None]
 testTic =  Tic("x",testBoard)
 testTic.display()
 print("displayed")

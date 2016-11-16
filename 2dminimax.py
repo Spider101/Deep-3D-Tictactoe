@@ -86,18 +86,21 @@ def determine(tic):
     # tic.display()
     states = []
     scores = []
+    count = 0
 
     for state in enumerate(tic.getNextPossibleStates()):
-        finalState = copy.deepcopy(determine(state[1]))
-        score = finalState.caclulateScore()
-        states.append(state[1])
-        scores.append(score)
+       # finalState = copy.deepcopy(determine(state[1]))
+       # score = finalState.caclulateScore()
+       # states.append(state[1])
+       # scores.append(score)
+       count += 1
+    print(count)
 
         # if score ==1:
         #     return state[1]
 
 
-    maxScore = -1
+'''    maxScore = -1
     maxScoreState = 0
     for score in enumerate(scores):
 
@@ -110,6 +113,7 @@ def determine(tic):
     if maxScoreState==0:
         return states[0]
     return maxScoreState
+'''
 
 
 
@@ -117,17 +121,18 @@ def determine(tic):
 
 
 
-
-testBoard = ["x",None,None,"o","o",None,None,None,None]
+#testBoard = ["x",None,None,"o","o",None,None,None,None]
+testBoard = []
 testTic =  Tic("x",testBoard)
 testTic.display()
-print("displayed")
+#print("displayed")
 # testTic.display()
 # print("that was init")
 # print(testTic.caclulateScore())
 # testTic.getNextPossibleStates()
-determine(testTic).display()
+#determine(testTic).display()
 
+print(determine(testTic))
 
 
 

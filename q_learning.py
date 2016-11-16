@@ -1,8 +1,11 @@
+__author__ = "Abhimanyu Banerjee"
+
 from random import random, choice
 import matplotlib.pyplot as plt
 import numpy as np
 import timeit
-import sys
+from sys import exit
+from copy import deepcopy
 import pdb
 
 def empty_state():
@@ -11,7 +14,7 @@ def empty_state():
 
 def print_board(state):
 
-	board_format = "----------------------------\n| {0} | {1} | {2} |\n|--------------------------|\n| {3} | {4} | {5} |\n|--------------------------|\n| {6} | {7} | {8} |\n----------------------------"
+	board_format = "-------------\n| {0} | {1} | {2} |\n|-------------|\n| {3} | {4} | {5} |\n|-------------|\n| {6} | {7} | {8} |\n-------------"
 	cell_values = []
 	symbols = ["O", " ", "X"]
 
@@ -20,6 +23,14 @@ def print_board(state):
 			cell_values.append(symbols[int(state[i][j] + 1)])
 
 	print board_format.format(*cell_values)
+
+def open_spots(state):
+	open_cells = []
+	for i in xrange(len(state)):
+		for j in xrange(len(state[i])):
+			if state[i][j] == 0:
+				open_cells.append(i*len(state) + j)
+	return open_cells
 
 def is_game_over(state):
 	''' check if any of the columns or rows or diagonals when summed are 
@@ -57,29 +68,49 @@ def get_state_key(state):
 
 	flat_state = [cell for row in state for cell in row]
 	key = "".join(map(str, flat_state))
-	#print key
+	print key
 	return key
 
 def generate_state_value_table(state, turn, player):
 
 	winner = int(is_game_over(state)) #check if for the current turn and state, game has finished and if so who won
 	print "\nWinner is ", winner
-	player.add_state(state, winner/2 + 0.5) #add the current state with the appropriate value to the state table
+	print "\nBoard at turn: ", turn
+	print_board(state)
+	if player.check_duplicates(state):
+		player.add_state(state, winner/2 + 0.5) #add the current state with the appropriate value to the state table
 
-	#either someone has won the game or it is a draw
-	if winner != 0 or turn > 8:	
+	for pos in open_spots(state):
+		pdb.set_trace()
+		row, col = pos / len(state), pos % len(state)
+		if state[row][col] == 0:
+			if turn % 2 == 0:
+				state[row][col] = 1
+			else:
+				state[row][col] = -1		
+			try:
+				generate_state_value_table(deepcopy(state), turn+1, player)
+			except:
+				print ""
+				#exit("Recursive depth exceeded")
+
+	'''#either someone has won the game or it is a draw
+	if winner != 0 or or col > len(state) or turn > 8:	
 		return 
 
 	#the game is still playable, so fill in a new cell
 	i, j = turn / 3, turn % 3
+	
+	if turn % 2 == 0:
+		state[row][col] = 1
+	else:
+		state[row][col] = -1
 
-	for symbol in [-1, 0, 1]:
-		state[i][j] = symbol
-		print "\nBoard after adding symbol: ", symbol, " at turn: ", turn
-		print_board(state)
-		#pdb.set_trace()
-		generate_state_value_table(state, turn+1, player) 
-
+	print "\nBoard after adding symbol: ", symbol, " at turn: ", turn
+	print_board(state)
+	#pdb.set_trace()
+	generate_state_value_table(state, turn+1, player) 
+'''
 
 class Agent(object):
 	
@@ -98,12 +129,17 @@ class Agent(object):
 		generate_state_value_table(empty_state(), 0, self)
 		print "Time taken to initialize state table: ", (timeit.default_timer() - start_time) 
 
+	def check_duplicates(self, state):
+		if get_state_key(state) in self.state_values:
+			return False
+		return True
+
 	def add_state(self, state, value):
 		print "\nFound new state ", self.num_states + 1
 		print "Added state #", len(self.state_values) + 1
 
 		if len(self.state_values) < self.num_states:
-			print "Duplicate!"
+			exit("Duplicate state!")
 
 		self.state_values[get_state_key(state)] = value
 		self.num_states += 1
@@ -127,13 +163,8 @@ class Agent(object):
 
 	def explore(self, state):
     	
-		open_spots = []
-		for i in xrange(len(state)):
-			for j in xrange(len(state[i])):
-				if state[i][j] == 0:
-					open_spots.append([i,j])
-
-		random_choice = choice(open_spots)
+		open_cells = open_spots(state)
+		random_choice = choice(open_cells)
 		return random_choice[0], random_choice[1]
 
 	def greedy(self, state):

@@ -68,7 +68,7 @@ def get_state_key(state):
 
 	flat_state = [cell for row in state for cell in row]
 	key = "".join(map(str, flat_state))
-	print key
+	#print key
 	return key
 
 def generate_state_value_table(state, turn, player):
@@ -76,42 +76,52 @@ def generate_state_value_table(state, turn, player):
 	winner = int(is_game_over(state)) #check if for the current turn and state, game has finished and if so who won
 	print "\nWinner is ", winner
 	print "\nBoard at turn: ", turn
-	print_board(state)
-	if player.check_duplicates(state):
-		player.add_state(state, winner/2 + 0.5) #add the current state with the appropriate value to the state table
+	print_board(state)	
+	player.add_state(state, winner/2 + 0.5) #add the current state with the appropriate value to the state table
 
-	for pos in open_spots(state):
-		pdb.set_trace()
-		row, col = pos / len(state), pos % len(state)
-		if state[row][col] == 0:
-			if turn % 2 == 0:
-				state[row][col] = 1
-			else:
-				state[row][col] = -1		
-			try:
-				generate_state_value_table(deepcopy(state), turn+1, player)
-			except:
-				print ""
-				#exit("Recursive depth exceeded")
+	board_size = len(state)*len(state)
 
-	'''#either someone has won the game or it is a draw
-	if winner != 0 or or col > len(state) or turn > 8:	
-		return 
+	open_cells = open_spots(state) 
+	if len(open_cells) > 0:
+		for cell in open_cells:
+			#pdb.set_trace()
+			row, col = cell / len(state), cell % len(state)
+			num_cells_occupied = (board_size - len(open_cells))
+			if state[row][col] == 0:
+				new_state = deepcopy(state)
+				if num_cells_occupied % 2 == 0:
+					new_state[row][col] = 1
+				else:
+					new_state[row][col] = -1		
+				try:
+					if not player.check_duplicates(new_state):
+						generate_state_value_table(new_state, turn+1, player)
+					else:
+						return
+				except:
+					print "Recursive depth exceeded"
+					exit()
 
-	#the game is still playable, so fill in a new cell
-	i, j = turn / 3, turn % 3
+		else:
+			return
+		'''#either someone has won the game or it is a draw
+		if winner != 0 or or col > len(state) or turn > 8:	
+			return 
+
+		#the game is still playable, so fill in a new cell
+		i, j = turn / 3, turn % 3
+		
+		if turn % 2 == 0:
+			state[row][col] = 1
+		else:
+			state[row][col] = -1
+
+		print "\nBoard after adding symbol: ", symbol, " at turn: ", turn
+		print_board(state)
+		#pdb.set_trace()
+		generate_state_value_table(state, turn+1, player) 
+	'''
 	
-	if turn % 2 == 0:
-		state[row][col] = 1
-	else:
-		state[row][col] = -1
-
-	print "\nBoard after adding symbol: ", symbol, " at turn: ", turn
-	print_board(state)
-	#pdb.set_trace()
-	generate_state_value_table(state, turn+1, player) 
-'''
-
 class Agent(object):
 	
 	def __init__(self, player):
@@ -130,13 +140,14 @@ class Agent(object):
 		print "Time taken to initialize state table: ", (timeit.default_timer() - start_time) 
 
 	def check_duplicates(self, state):
+		''' return true if state passed is already registered in the state table'''
+		
 		if get_state_key(state) in self.state_values:
-			return False
-		return True
+			return True
+		return False
 
 	def add_state(self, state, value):
-		print "\nFound new state ", self.num_states + 1
-		print "Added state #", len(self.state_values) + 1
+		print "\nAdded state", len(self.state_values) + 1
 
 		if len(self.state_values) < self.num_states:
 			exit("Duplicate state!")

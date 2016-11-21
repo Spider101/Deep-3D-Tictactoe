@@ -17,9 +17,14 @@ PlayerX = "x"
 PlayerO = "o"
 
 def generateEmptyBoard():
-    return np.array([[[None] * ticTacToeShape[0]] * ticTacToeShape[1]]*ticTacToeShape[3])
+    return np.zeros(ticTacToeShape).astype("int")
 
 
+def printBoard3D(board):
+    
+    for sub_board in board:
+        print_board(sub_board)
+        print()
 
 def checkIfGameOver(state):
     """
@@ -79,5 +84,5 @@ model = Sequential()
 model.add(Dense(256,input_dim=ticTacToeShape[0]*ticTacToeShape[1]*ticTacToeShape[2]))
 model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
 
-board = [[[0]*3]*3]*3
-print_board(board)
+empty_board = generateEmptyBoard()
+printBoard3D(empty_board)

@@ -5,15 +5,10 @@ np.random.seed(1337)  # for reproducibility
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
-from keras.utils import np_utils
-from keras import backend as K
+#from keras.utils import np_utils
+#from keras import backend as K
 import matplotlib.pyplot as plt
-
-
-
-
-
-
+from q_learning import print_board
 
 ticTacToeShape = (3,3,3)
 
@@ -34,6 +29,18 @@ def checkIfGameOver(state):
     return True
 
 
+def hasWonGame(state):
+    ''' check if either opponent has won the game given the current board'''
+    
+    for sub_board in state:
+        sub_board = np.array(deepcopy(sub_board))
+        '''winner = is_game_over(sub_board)
+        if winner != 0:
+            return True'''
+
 model = Sequential()
 model.add(Dense(256,input_dim=ticTacToeShape[0]*ticTacToeShape[1]*ticTacToeShape[2]))
 model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
+
+board = [[[0]*3]*3]*3
+print_board(board)

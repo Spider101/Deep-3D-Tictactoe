@@ -17,6 +17,13 @@ import matplotlib.pyplot as plt
 
 
 ticTacToeShape = (3,3,3)
+# DataSetInput = np.array((,3,3,3))
+PlayerX = "x"
+PlayerO = "o"
+
+def generateEmptyBoard():
+    return np.array([[[None] * ticTacToeShape[0]] * ticTacToeShape[1]]*ticTacToeShape[3])
+
 
 
 def checkIfGameOver(state):
@@ -59,6 +66,11 @@ def makeRandomMove(state):
    :return:
    """
    return random.choice(getOpenSpots(state))
+
+
+
+def StartRandomPlay():
+    startingPlayer = PlayerX if random.randint(0,1) ==1 else PlayerO
 
 
 

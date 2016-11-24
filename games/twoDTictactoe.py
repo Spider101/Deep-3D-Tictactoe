@@ -141,3 +141,22 @@ class tttAgent2D(object):
 
 		self.update_state_table(max_value)
 		return best_move[0], best_move[1]
+
+	def play(self, opponent):
+		''' play a game of ttt against a predefined opponent'''
+		
+		state = empty_state()
+		num_cells = len(state)*len(state[0])
+		for turn in range(num_cells):
+			if turn % 2 == 0:
+				i, j = self.action(deepcopy(state))
+				symbol = self.symbol
+			else:
+				i, j = opponent.action(deepcopy(state))
+				symbol = opponent.symbol
+			state[i][j] = symbol
+			winner = int(is_game_over(state))
+			if winner != 0: #one of the players won
+				return winner 
+		
+		return winner #nobody won

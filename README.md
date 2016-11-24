@@ -8,14 +8,14 @@ This project is an attempt to adapt Deep Q-Learning, as described in [Playing At
 ## TODOS:
 * ~~Enumerate best states for 2D tictactoe using minimax~~
 
-* Implement q learning for 2D tictactoe
+* ~~Implement q learning for 2D tictactoe~~
 
-* Extend minimax and q learning for 3D tictactoe and see what breaks
+* Extend q learning for 3D tictactoe and see what breaks
+
+* Implement policy gradient learning using a simple 2-layer neural net for 2D Tictactoe (then 3D Tictactoe)
 
 * Establish reward rubrics and input format for 3D tictactoe DQN pipeline
 
-* Explore optimisation techniques for tree search of 3D tictactoe search space
-
-* Design model pipeline for DQN
+* Design model pipeline for DQN and/or Policy Gradient Learning
 
 * Experiment with model architecture to improve performance

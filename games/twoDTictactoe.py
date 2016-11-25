@@ -5,6 +5,7 @@ import numpy as np
 import timeit
 from sys import exit
 from copy import deepcopy
+import pickle
 import pdb
 
 from .board import *
@@ -111,7 +112,7 @@ class tttAgent2D(object):
 
 		toss = random()
 
-		# explore if toss is more than threshold, else choose next move greedy-ly
+		# explore if toss is more than threshold, else choose next move greedily
 		if toss > self.behaviour_threshold:
 			i, j = self.explore(state)
 		else:

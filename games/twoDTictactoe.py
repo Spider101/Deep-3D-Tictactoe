@@ -11,20 +11,33 @@ from .board import *
 
 class tttAgent2D(object):
 	
-	def __init__(self, symbol, is_learning=True):
+	def __init__(self, symbol, is_learning=True, behaviour_threshold=0.5):
 		self.state_values = {}
 		self.symbol = symbol
 		self.is_learning = is_learning
-		self.behaviour_threshold = 0.1
 		self.learning_rate = 0.9
 		self.prev_state = None
 		self.prev_score = 0
 		self.num_states = 0
 
-		print("\nInitializing state table for player ", self.symbol, ". Please wait ...")
-		start_time = timeit.default_timer()
-		self.generate_state_value_table(empty_state(), 0)
-		print("Time taken to initialize state table: ", (timeit.default_timer() - start_time) )
+		if self.is_learning:
+			
+			self.behaviour_threshold = behaviour_threshold
+			print("\nInitializing state table for player ", self.symbol, ". Please wait ...")
+			#start_time = timeit.default_timer()
+			self.generate_state_value_table(empty_state(), 0)
+
+		else:
+			self.behavior = 1 #set behaviour threshold such that agent is always in exploit mode
+			
+			#just to be safe that the pickle exists before we load it 
+			try:
+				if self.symbol == 1:
+					self.state_values = pickle.load(open("state_table_X.p", "rb"))
+				else:
+					self.state_values = pickle.load(open("state_table_O.p", "rb"))
+			except (OSError, IOError):
+				exit("The AI is not ready. Please train it first!")
 
 	def generate_state_value_table(self, state, turn):
 
@@ -142,9 +155,9 @@ class tttAgent2D(object):
 		self.update_state_table(max_value)
 		return best_move[0], best_move[1]
 
-	def play(self, opponent):
+	def self_play(self, opponent):
 		''' play a game of ttt against a predefined opponent'''
-		
+
 		state = empty_state()
 		num_cells = len(state)*len(state[0])
 		for turn in range(num_cells):
@@ -160,3 +173,16 @@ class tttAgent2D(object):
 				return winner 
 		
 		return winner #nobody won
+
+
+	def play_opponent(self, state, action):
+		''' register the current move and then make a move against an unknown opponent '''
+		
+		row, col = int(action / len(state)), action % len(state) #get the row and column to mark from the chosen action
+		state[row][col] = -1 * self.symbol # invert the agent's symbol to get the opponent's
+		reward = -1*self.get_reward(deepcopy(state)) #invert the reward from the agent's perspective to get that of the opponent
+
+		i, j = self.action(deepcopy(state)) #get the agent's move
+		symbol = self.symbol
+		state[i][j] = symbol #mark the board with the agent's move
+		return state, reward

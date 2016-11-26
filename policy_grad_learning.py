@@ -55,7 +55,8 @@ def play_episode(agent, model, state):
 	
 	while winner != 0:
 		
-		input = np.array([cell for row in state for cell in row])
+		input = np.transpose(np.vstack([cell for row in state for cell in row]))
+
 		#forward the policy and sample an action from the return probability
 		activation, action_prob = policy_forward(model, input)
 		action = np.around(action_prob*board_shape[0]*board_shape[1])

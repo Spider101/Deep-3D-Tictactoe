@@ -18,6 +18,8 @@ from games.board import empty_state, is_game_over
 def measure_performance(player1, player2, num_games):
 	
 	probs = [0,0,0]
+	player1.behaviour_threshold = 1 #aggressive player
+	player2.behaviour_threshold = 0 #random player
 	for i in range(num_games):
 		print("\nStarting game", i+1)
 		winner = player1.self_play(player2)
@@ -38,15 +40,17 @@ def measure_performance(player1, player2, num_games):
 
 def driver():
 	
-	player1 = tttAgent2D(symbol=1, behaviour_threshold=0.8)
-	player2 = tttAgent2D(symbol=-1, behaviour_threshold=0.0)
-	batches, batch_probs = 1000, []
+	player1 = tttAgent2D(symbol=1, behaviour_threshold=0.05)
+	player2 = tttAgent2D(symbol=-1, behaviour_threshold=0.05)
+	batches, batch_probs = 5000, []
 
 	for i in range(batches):
 		print("\nStarting batch", i)
-		batch_probs.append(measure_performance(player1, player2, 100))
-	
-	epochs = [i for i in range(batches)]
+		if i % 10 == 0:
+			batch_probs.append(measure_performance(deepcopy(player1), deepcopy(player2), 100))
+		player1.self_play(player2)
+
+	epochs = [i for i in range(int(batches/10))]
 	win_probs = [probs[2] for probs in batch_probs]
 	plt.plot(epochs, win_probs, label="Win Probability", color="g")
 	plt.xlabel('Epochs')

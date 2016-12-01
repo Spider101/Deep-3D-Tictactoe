@@ -1,24 +1,15 @@
-from __future__ import print_function
-
-from random import random, choice
-import numpy as np
-import timeit
-from sys import exit
-from copy import deepcopy
-import pickle
-import pdb
-
 from .board import *
 
 class tttAgent2D(object):
 	
-	def __init__(self, symbol, is_learning=True, behaviour_threshold=0.5):
+	def __init__(self, symbol, is_learning=True, behaviour_threshold=0.1):
 		self.state_values = {}
 		self.symbol = symbol
 		self.is_learning = is_learning
 		self.learning_rate = 0.9
 		self.prev_state = None
 		self.prev_score = 0
+		self.num_actions = 9
 		self.num_states = 0
 
 		if self.is_learning:
@@ -176,7 +167,7 @@ class tttAgent2D(object):
 		return winner #nobody won
 
 
-	def play_opponent(self, state, action):
+	def play_board(self, state, action):
 		''' register the current move and then make a move against an unknown opponent '''
 		
 		row, col = int(action / len(state)), action % len(state) #get the row and column to mark from the chosen action
@@ -186,4 +177,5 @@ class tttAgent2D(object):
 		i, j = self.action(deepcopy(state)) #get the agent's move
 		symbol = self.symbol
 		state[i][j] = symbol #mark the board with the agent's move
-		return state, reward
+		
+		return state #, reward

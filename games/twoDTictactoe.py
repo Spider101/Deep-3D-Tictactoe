@@ -193,5 +193,5 @@ class tttAgent2D(object):
 		else:
 			reward = -1
 
-		print_board(state)
+		#print_board(state)
 		return state, reward

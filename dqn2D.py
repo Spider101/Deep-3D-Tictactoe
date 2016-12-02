@@ -28,11 +28,11 @@ class DQNAgent(object):
 		self.model = model
 
 	''', epsilon_rate=0.5'''
-	def train_network(self, game, num_epoch=1000, batch_size=50, gamma=0.9, epsilon=.1, reset_memory=False, observe=2):
+	def train_network(self, game, num_epoch=1000, batch_size=50, gamma=0.9, epsilon=.5, reset_memory=False, observe=2):
 
 		model = self.model
 		nb_actions = model.output_shape[-1]
-		win_count = 0
+		win_count, loss_count = 0, 0
 		
 		for epoch in range(num_epoch):
 			
@@ -46,8 +46,7 @@ class DQNAgent(object):
 			
 			while not game_over:
 
-				#pdb.set_trace()
-				if np.random.random() < epsilon: #or epoch < observe:
+				if np.random.random() > epsilon: #or epoch < observe:
 					empty_cells = open_spots(current_state)
 					move = choice(empty_cells) # choose move randomly from available moves
 				
@@ -60,11 +59,11 @@ class DQNAgent(object):
 				
 				#check if current state is a winning board
 				if not reward:
+					winner = is_game_over(current_state)
 					break
 				
 				#check who, if anyone, has won
 				winner = is_game_over(next_state)
-				print("Winner: ", winner)
 				if winner != 0 or len(open_spots(next_state)) == 1:
 					game_over = True
 
@@ -79,15 +78,16 @@ class DQNAgent(object):
 					if batch:
 						inputs, targets = batch
 						loss += float(model.train_on_batch(inputs, targets))
-						pdb.set_trace()
 				
 				'''if checkpoint and ((epoch + 1 - observe) % checkpoint == 0 or epoch + 1 == num_epoch):
 					model.save_weights('weights.dat')'''
 			
 			if winner == -1*game.symbol: #ttt agent's symbol is inverted to get the model's symbol
 				win_count += 1
+			else:
+				loss_count += 1
 			
-			print("Epoch {:03d}/{:03d} | Loss {:.4f} | Epsilon {:.2f} | Win count {}".format(epoch + 1, num_epoch, loss, epsilon, win_count))
+			print("Epoch {:03d}/{:03d} | Loss {:.4f} | Epsilon {:.2f} | Wins {} | Losses {}".format(epoch + 1, num_epoch, loss, epsilon, win_count, loss_count))
 
 
 
@@ -121,5 +121,5 @@ if __name__ == "__main__":
 	tictactoe = tttAgent2D(symbol=-1, is_learning=False)
 
 	dqnAgent = DQNAgent(model=model, memory_size=-1)
-	dqnAgent.train_network(tictactoe, batch_size=64, num_epoch=10, gamma=0.8)
+	dqnAgent.train_network(tictactoe, batch_size=64, num_epoch=100, gamma=0.8)
 

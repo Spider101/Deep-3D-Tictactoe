@@ -12,6 +12,8 @@ This project is an attempt to adapt Deep Q-Learning, as described in [Playing At
 
 * Extend q learning for 3D tictactoe and see what breaks
 
+* ~~Implement deep q learning using a simple 2-layer neural net for 2D Tictactoe~~ (then 3D Tictactoe)
+
 * Implement policy gradient learning using a simple 2-layer neural net for 2D Tictactoe (then 3D Tictactoe)
 
 * Establish reward rubrics and input format for 3D tictactoe DQN pipeline

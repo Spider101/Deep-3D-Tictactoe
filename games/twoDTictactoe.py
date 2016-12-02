@@ -1,4 +1,8 @@
 from .board import *
+import pickle
+from copy import deepcopy
+from random import random, choice
+import pdb
 
 class tttAgent2D(object):
 	
@@ -20,7 +24,7 @@ class tttAgent2D(object):
 			self.generate_state_value_table(empty_state(), 0)
 
 		else:
-			self.behavior = 1 #set behaviour threshold such that agent is always in exploit mode
+			self.behaviour_threshold = 1 #set behaviour threshold such that agent is always in exploit mode
 			
 			#just to be safe that the pickle exists before we load it 
 			try:
@@ -171,11 +175,16 @@ class tttAgent2D(object):
 		''' register the current move and then make a move against an unknown opponent '''
 		
 		row, col = int(action / len(state)), action % len(state) #get the row and column to mark from the chosen action
-		state[row][col] = -1 * self.symbol # invert the agent's symbol to get the opponent's
-		reward = -1*self.get_reward(deepcopy(state)) #invert the reward from the agent's perspective to get that of the opponent
 
-		i, j = self.action(deepcopy(state)) #get the agent's move
-		symbol = self.symbol
-		state[i][j] = symbol #mark the board with the agent's move
-		
-		return state #, reward
+		#check if cell is empty
+		if state[row][col] == 0:
+			state[row][col] = -1 * self.symbol # invert the agent's symbol to get the opponent's
+			reward = 1-self.state_values[get_state_key(deepcopy(state))] #invert the reward from the agent's perspective to get that of the opponent
+			i, j = self.action(deepcopy(state)) #get the agent's move
+			symbol = self.symbol
+			state[i][j] = symbol #mark the board with the agent's move
+		else:
+			reward = -1
+
+		print_board(state)
+		return state, reward

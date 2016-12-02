@@ -15,6 +15,9 @@ def print_board(state):
 
     print(board_format.format(*cell_values))
 
+def flatten_state(state):
+    return np.transpose(np.vstack([cell for row in state for cell in row]))
+
 def open_spots(state):
     open_cells = []
     for i in range(len(state)):

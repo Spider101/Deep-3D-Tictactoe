@@ -178,11 +178,18 @@ class tttAgent2D(object):
 
 		#check if cell is empty
 		if state[row][col] == 0:
+			
 			state[row][col] = -1 * self.symbol # invert the agent's symbol to get the opponent's
 			reward = 1-self.state_values[get_state_key(deepcopy(state))] #invert the reward from the agent's perspective to get that of the opponent
-			i, j = self.action(deepcopy(state)) #get the agent's move
-			symbol = self.symbol
-			state[i][j] = symbol #mark the board with the agent's move
+
+			#check if the current move was a winning one otherwise let agent play
+			if is_game_over(state) == 0:
+				i, j = self.action(deepcopy(state)) #get the agent's move
+				symbol = self.symbol
+				state[i][j] = symbol #mark the board with the agent's move
+			else:
+				reward = False
+
 		else:
 			reward = -1
 

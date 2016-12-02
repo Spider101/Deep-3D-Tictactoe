@@ -57,12 +57,15 @@ class DQNAgent(object):
 					move = int(np.argmax(q[0]))
 
 				next_state, reward = game.play_board(current_state, move)
-				#reward = game.get_reward()
+				
+				#check if current state is a winning board
+				if not reward:
+					break
 				
 				#check who, if anyone, has won
 				winner = is_game_over(next_state)
 				print("Winner: ", winner)
-				if winner != 0:
+				if winner != 0 or len(open_spots(next_state)) == 1:
 					game_over = True
 
 				'''reward,'''
@@ -76,6 +79,7 @@ class DQNAgent(object):
 					if batch:
 						inputs, targets = batch
 						loss += float(model.train_on_batch(inputs, targets))
+						pdb.set_trace()
 				
 				'''if checkpoint and ((epoch + 1 - observe) % checkpoint == 0 or epoch + 1 == num_epoch):
 					model.save_weights('weights.dat')'''

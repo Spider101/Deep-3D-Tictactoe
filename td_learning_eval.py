@@ -11,8 +11,9 @@ from sys import exit
 from copy import deepcopy
 import pdb
 import pickle
+from os.path import join
 
-from games import tttAgent2D
+from agents import TDAgent
 from games.board import empty_state, is_game_over
 
 def measure_performance(player1, player2, num_games):
@@ -38,12 +39,15 @@ def measure_performance(player1, player2, num_games):
 
 	return probs
 
-def driver():
+if __name__ == "__main__":
 	
-	player1 = tttAgent2D(symbol=1, behaviour_threshold=0.05)
-	player2 = tttAgent2D(symbol=-1, behaviour_threshold=0.05)
-	batches, batch_probs = 5000, []
+	player1 = TDAgent(symbol=1, behaviour_threshold=0.05, dims=2)
+	player2 = TDAgent(symbol=-1, behaviour_threshold=0.05, dims=2)
+	
+	player1.reset_agent()
+	player2.reset_agent()
 
+	batches, batch_probs = 5000, []
 	for i in range(batches):
 		print("\nStarting batch", i)
 		if i % 10 == 0:
@@ -52,6 +56,7 @@ def driver():
 
 	epochs = [i for i in range(int(batches/10))]
 	win_probs = [probs[2] for probs in batch_probs]
+	
 	plt.plot(epochs, win_probs, label="Win Probability", color="g")
 	plt.xlabel('Epochs')
 	plt.ylabel('Probability')
@@ -62,12 +67,10 @@ def driver():
 	plt.savefig('selfplay_threshold_{0}.png'.format(behaviour_threshold))
 
 	if player1.behaviour_threshold != 0.0:
-		pickle.dump(player1.state_values, open("state_table_X.p", "wb"))
+		pickle.dump(player1.state_values, open(join("agents","state_table_X.p"), "wb"))
 
 	if player2.behaviour_threshold != 0.0:
-		pickle.dump(player2.state_values, open("state_table_O.p", "wb"))
-
-driver()
+		pickle.dump(player2.state_values, open(join("agents","state_table_O.p"), "wb"))
 
 player1 = Agent(symbol=1)
 # player2 = Agent(symbol=-1)

@@ -1,12 +1,13 @@
-from .board import *
+from games.board import *
 import pickle
 from copy import deepcopy
 from random import random, choice
 import pdb
+from os.path import join
 
-class tttAgent2D(object):
+class TDAgent(object):
 	
-	def __init__(self, symbol, is_learning=True, behaviour_threshold=0.1):
+	def __init__(self, symbol, is_learning=True, behaviour_threshold=0.1, dims=2):
 		self.state_values = {}
 		self.symbol = symbol
 		self.is_learning = is_learning
@@ -14,14 +15,17 @@ class tttAgent2D(object):
 		self.prev_state = None
 		self.prev_score = 0
 		self.num_actions = 9
+		self.behaviour_threshold = behaviour_threshold	
 		self.num_states = 0
+		self.dims = dims
 
+	def reset_agent(self):
+		
 		if self.is_learning:
 			
-			self.behaviour_threshold = behaviour_threshold
 			print("\nInitializing state table for player ", self.symbol, ". Please wait ...")
 			#start_time = timeit.default_timer()
-			self.generate_state_value_table(empty_state(), 0)
+			self.generate_state_value_table(empty_state(self.dims), 0)
 
 		else:
 			self.behaviour_threshold = 1 #set behaviour threshold such that agent is always in exploit mode
@@ -29,9 +33,9 @@ class tttAgent2D(object):
 			#just to be safe that the pickle exists before we load it 
 			try:
 				if self.symbol == 1:
-					self.state_values = pickle.load(open("state_table_X.p", "rb"))
+					self.state_values = pickle.load(open(join("agents", "state_table_X.p"), "rb"))
 				else:
-					self.state_values = pickle.load(open("state_table_O.p", "rb"))
+					self.state_values = pickle.load(open(join("agents", "state_table_O.p"), "rb"))
 			except (OSError, IOError):
 				exit("The AI is not ready. Please train it first!")
 
@@ -154,8 +158,9 @@ class tttAgent2D(object):
 	def self_play(self, opponent):
 		''' play a game of ttt against a predefined opponent'''
 
-		state = empty_state()
-		num_cells = len(state)*len(state[0])
+		state = empty_state(self.dims)
+		num_cells = len(open_spots(state))
+
 		for turn in range(num_cells):
 			if turn % 2 == 0:
 				i, j = self.action(deepcopy(state))
@@ -180,18 +185,17 @@ class tttAgent2D(object):
 		if state[row][col] == 0:
 			
 			state[row][col] = -1 * self.symbol # invert the agent's symbol to get the opponent's
-			reward = 1-self.state_values[get_state_key(deepcopy(state))] #invert the reward from the agent's perspective to get that of the opponent
+			#reward = 1-self.state_values[get_state_key(deepcopy(state))] #invert the reward from the agent's perspective to get that of the opponent
+			reward = is_game_over(state)
 
 			#check if the current move was a winning one otherwise let agent play
-			if is_game_over(state) == 0:
+			if reward == 0:
 				i, j = self.action(deepcopy(state)) #get the agent's move
 				symbol = self.symbol
 				state[i][j] = symbol #mark the board with the agent's move
-			else:
-				reward = False
 
 		else:
-			reward = -1
+			reward = 0
 
 		#print_board(state)
 		return state, reward

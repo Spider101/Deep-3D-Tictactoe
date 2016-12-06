@@ -68,6 +68,6 @@ class ExperienceReplay(object):
 		delta = np.zeros((batch_size, num_actions))
 		actions = actions.astype("int")
 		delta[np.arange(batch_size), actions] = 1
-		targets = (1 - delta) * predictions[:batch_size] + delta * (rewards + gamma * (1 - game_overs) * optimal_q_values)
+		targets = (1 - delta) * predictions[:batch_size] + delta * (rewards + (1 - game_overs) * optimal_q_values)
 
 		return current_states, targets

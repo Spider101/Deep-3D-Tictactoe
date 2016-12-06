@@ -1,6 +1,6 @@
 import numpy as np
 
-def empty_state():
+def empty_state(dims):
     '''establish the empty state wherein each cell is filled by zero'''
     return np.array([[0] * 3] * 3)
 
@@ -44,12 +44,12 @@ def is_game_over(state):
         elif state_trans[i].sum() != 0 and state_trans[i].sum() % 3 == 0:
             return state_trans.sum() / 3
 
-            # extract major diagonal from the state
+    # extract major diagonal from the state
     major_diag = np.multiply(np.array(state), np.identity(len(state)))
     if major_diag.sum() != 0 and major_diag.sum() % 3 == 0:
         return major_diag.sum() / 3
 
-        # extract minor diagonal from the state
+    # extract minor diagonal from the state
     minor_diag = np.multiply(np.array(state), np.fliplr(major_diag))
     if minor_diag.sum() != 0 and minor_diag.sum() % 3 == 0:
         return minor_diag.sum() / 3

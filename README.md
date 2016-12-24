@@ -10,14 +10,16 @@ This project is an attempt to adapt Deep Q-Learning, as described in [Playing At
 
 * ~~Implement q learning for 2D tictactoe~~
 
-* Extend q learning for 3D tictactoe and see what breaks
+* ~~Extend q learning for 3D tictactoe and see what breaks~~ (couldn't finish enumerating states in state table - 80 million and counting)
 
 * ~~Implement deep q learning using a simple 2-layer neural net for 2D Tictactoe~~ (then 3D Tictactoe)
 
 * Implement policy gradient learning using a simple 2-layer neural net for 2D Tictactoe (then 3D Tictactoe)
 
-* Establish reward rubrics and input format for 3D tictactoe DQN pipeline
+* ~~Establish reward rubrics and input format for tictactoe DQN pipeline~~
 
-* Design model pipeline for DQN and/or Policy Gradient Learning
+* ~~Design model pipeline for DQN~~
 
-* Experiment with model architecture to improve performance
+* Design model pipeling for Policy Gradient Learning
+
+* ~~Experiment with model architecture to improve performance~~

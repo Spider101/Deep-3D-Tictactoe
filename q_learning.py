@@ -24,7 +24,7 @@ def print_board(state):
         for j in xrange(len(state[i])):
             cell_values.append(symbols[int(state[i][j] + 1)])
 
-    print board_format.format(*cell_values)
+    print(board_format.format(*cell_values))
 
 def open_spots(state):
     open_cells = []

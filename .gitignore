@@ -2,3 +2,6 @@ git_key
 git_key.pub
 
 agents/*.p
+
+__pycache__
+

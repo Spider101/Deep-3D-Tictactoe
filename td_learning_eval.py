@@ -73,6 +73,3 @@ if __name__ == "__main__":
 	if player2.behaviour_threshold != 0.0:
 		pickle.dump(player2.state_values, open(join("agents","state_table_{}x{}_X.p".format(4, 4)), "wb"))
 
-player1 = Agent(symbol=1)
-# player2 = Agent(symbol=-1)
-print "\nNumber of possible states: ", player1.count_states()

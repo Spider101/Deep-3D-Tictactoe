@@ -76,6 +76,10 @@ def makeRandomMove(state):
    return random.choice(getOpenSpots(state))
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> bb601ab2da342d057377a919141091a78a1fb284
 def StartRandomPlay():
     startingPlayer = PlayerX if random.randint(0,1) ==1 else PlayerO
 

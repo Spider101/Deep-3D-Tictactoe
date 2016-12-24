@@ -5,6 +5,8 @@ np.random.seed(1337)  # for reproducibility
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 import random
+from copy import deepcopy
+import keras
 from keras.layers import Convolution2D, MaxPooling2D
 #from keras.utils import np_utils
 #from keras import backend as K
@@ -79,6 +81,19 @@ def makeRandomMove(state):
 def StartRandomPlay():
     startingPlayer = PlayerX if random.randint(0,1) ==1 else PlayerO
 
+def get_trainable_params(model):
+    """
+    get all parameters , which will be used to calculate gradient
+    :param model:
+    :return:
+    """
+    params = []
+    for layer in model.layers:
+        params += keras.engine.training.collect_trainable_weights(layer)
+    #later on you might need to use
+    #param_grad = tf.gradients(cost, network_params)
+    #and then update the weights
+    return params
 
 model = Sequential()
 model.add(Dense(256,input_dim=ticTacToeShape[0]*ticTacToeShape[1]*ticTacToeShape[2]))
